@@ -57,12 +57,40 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Build debug APK
+        id: build_apk
         working-directory: pedu-fe/android
+        continue-on-error: true
         run: |
+          set +e
           set -o pipefail
           ./gradlew assembleDebug --stacktrace --warning-mode all 2>&1 | tee gradle-build.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Report Gradle failure
+        if: steps.build_apk.outputs.exit_code != '0'
+        working-directory: pedu-fe/android
+        run: |
+          echo "Gradle failed. Last 80 log lines:"
+          tail -n 80 gradle-build.log
+          {
+            echo 'GRADLE_TAIL<<EOF'
+            tail -n 40 gradle-build.log
+            echo EOF
+          } >> "$GITHUB_ENV"
+
+      - name: Fail when APK build fails
+        if: steps.build_apk.outputs.exit_code != '0'
+        working-directory: pedu-fe/android
+        run: |
+          tail="$(tail -n 40 gradle-build.log)"
+          tail="${tail//'%'/'%25'}"
+          tail="${tail//$'\n'/'%0A'}"
+          tail="${tail//$'\r'/'%0D'}"
+          echo "::error title=Gradle build failed::$tail"
+          exit 1
 
       - name: Upload APK artifact
+        if: steps.build_apk.outputs.exit_code == '0'
         uses: actions/upload-artifact@v4
         with:
           name: pedu-debug-apk
