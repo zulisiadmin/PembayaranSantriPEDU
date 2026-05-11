@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { LoadingState } from '../components/LoadingState';
 import { ListScreen } from '../components/ListScreen';
-import { bills as fallbackBills } from '../data/mockData';
 import './BillsPage.css';
 
 export function BillsPage() {
@@ -35,9 +34,9 @@ export function BillsPage() {
       setBills(data.bills || []);
       setVoucherHint(Boolean(data.voucherHint));
       setStatus('ready');
-    } catch {
-      setBills(fallbackBills);
-      setStatus('fallback');
+    } catch (error) {
+      setBills([]);
+      setStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
     }
   }
 
@@ -95,7 +94,7 @@ export function BillsPage() {
         <button onClick={applyVoucher}>Pakai</button>
       </div>
       {status === 'loading' && <LoadingState rows={3} />}
-      {status && !['loading', 'ready', 'fallback'].includes(status) && <p className="bill-status">{status}</p>}
+      {status && !['loading', 'ready'].includes(status) && <p className="bill-status">{status}</p>}
       <div className="bill-tabs" role="tablist" aria-label="Filter tagihan">
         <button className={activeTab === 'unpaid' ? 'active' : ''} onClick={() => setActiveTab('unpaid')}>
           Belum Dibayar <span>{unpaidBills.length}</span>

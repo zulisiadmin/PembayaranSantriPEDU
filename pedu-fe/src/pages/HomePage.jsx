@@ -2,7 +2,7 @@ import { Clock3, MapPin, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { LoadingState } from '../components/LoadingState';
-import { formatAgendaDate, getTodayAgenda } from '../data/mockData';
+import { formatAgendaDate } from '../data/mockData';
 import './HomePage.css';
 
 const menuItems = [
@@ -48,10 +48,10 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
         if (!alive) return;
         setTodayAgenda(data.agendas || []);
         setAgendaStatus('ready');
-      } catch {
+      } catch (error) {
         if (!alive) return;
-        setTodayAgenda(getTodayAgenda());
-        setAgendaStatus('fallback');
+        setTodayAgenda([]);
+        setAgendaStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
       }
     }
 
@@ -118,7 +118,14 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
           <LoadingState rows={2} />
         )}
 
-        {agendaStatus !== 'loading' && todayAgenda.length > 0 ? todayAgenda.map((agenda) => (
+        {!['loading', 'ready'].includes(agendaStatus) && (
+          <div className="empty-agenda">
+            <i className="fa-solid fa-wifi" aria-hidden="true" />
+            <p>{agendaStatus}</p>
+          </div>
+        )}
+
+        {agendaStatus === 'ready' && todayAgenda.length > 0 ? todayAgenda.map((agenda) => (
           <article className="agenda-row" key={agenda.id}>
             <div>
               <h3>{agenda.title}</h3>
@@ -136,7 +143,7 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
               {!agenda.isHoliday && <button onClick={() => onOpenAgenda(agenda)}>Detail</button>}
             </div>
           </article>
-        )) : agendaStatus !== 'loading' && (
+        )) : agendaStatus === 'ready' && (
           <div className="empty-agenda">
             <i className="fa-solid fa-moon" aria-hidden="true" />
             <p>Tidak ada pengajian malam hari ini.</p>
@@ -149,7 +156,8 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
           <i className="fa-solid fa-bullhorn" aria-hidden="true" />
           <div>
             <strong>{announcement.title}</strong>
-            <p>{announcement.body}</p>
+            <p>{announcement.body || announcement.message || announcement.content}</p>
+            <em>Lihat detail</em>
           </div>
         </button>
       )}
@@ -184,7 +192,7 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
             </button>
             <i className="fa-solid fa-bullhorn" aria-hidden="true" />
             <h2>{announcement.title}</h2>
-            <p>{announcement.body}</p>
+            <p>{announcement.body || announcement.message || announcement.content}</p>
             {announcement.dateLabel && <span>{announcement.dateLabel}</span>}
             <button className="modal-primary-button" type="button" onClick={() => setAnnouncementOpen(false)}>
               Mengerti

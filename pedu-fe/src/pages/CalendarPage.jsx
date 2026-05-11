@@ -26,10 +26,10 @@ export function CalendarPage() {
         if (!alive) return;
         setEvents(data.events || []);
         setStatus('ready');
-      } catch {
+      } catch (error) {
         if (!alive) return;
-        setEvents(buildFallbackEvents(visibleMonth));
-        setStatus('fallback');
+        setEvents([]);
+        setStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
       }
     }
 
@@ -107,6 +107,8 @@ export function CalendarPage() {
 
         {status === 'loading' ? (
           <div className="empty-calendar-detail">Sedang memuat...</div>
+        ) : status !== 'ready' ? (
+          <div className="empty-calendar-detail">{status}</div>
         ) : selectedEvents.length === 0 ? (
           <div className="empty-calendar-detail">Tidak ada agenda di tanggal ini</div>
         ) : (
@@ -153,30 +155,6 @@ function groupEventsByDate(events) {
     grouped[event.date] = [...(grouped[event.date] || []), event];
     return grouped;
   }, {});
-}
-
-function buildFallbackEvents(month) {
-  const year = month.getFullYear();
-  const monthIndex = month.getMonth();
-  return [
-    fallbackEvent(new Date(year, monthIndex, 3), 'Pengajian Fathul Qorib', '20:00 - 23:00', 'Pengajian Kelas', '#386641'),
-    fallbackEvent(new Date(year, monthIndex, 4), 'Nasoihul Ibad', '20:00 - 23:00', 'Pengajian Kelas', '#386641'),
-    fallbackEvent(new Date(year, monthIndex, 7), 'Berzanji', '20:00', 'Rutin Pesantren', '#D89B00'),
-    fallbackEvent(new Date(year, monthIndex, 8), 'Sholat Tasbih', '20:00', 'Agenda Pesantren', '#A7C957'),
-  ];
-}
-
-function fallbackEvent(date, title, time, typeLabel, color) {
-  return {
-    id: `${title}-${toDateKey(date)}`,
-    date: toDateKey(date),
-    title,
-    time,
-    typeLabel,
-    color,
-    type: 'fallback',
-    location: 'Aula Utama',
-  };
 }
 
 function toDateKey(date) {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { createRoot } from 'react-dom/client';
 import { apiFetch, clearSession, getStoredSession, storeSession } from './api';
 import { Layout } from './components/Layout';
-import { getTestingAgenda } from './data/mockData';
 import { AgendaPage } from './pages/AgendaPage';
 import { AboutPage } from './pages/AboutPage';
 import { AdminPage } from './pages/AdminPage';
@@ -25,8 +25,14 @@ function App() {
   const [authMode, setAuthMode] = useState('login');
   const [authStatus, setAuthStatus] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
-  const [selectedAgenda, setSelectedAgenda] = useState(getTestingAgenda()[0]);
+  const [selectedAgenda, setSelectedAgenda] = useState(null);
   const [bootstrapData, setBootstrapData] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const viewRef = React.useRef(view);
+
+  useEffect(() => {
+    viewRef.current = view;
+  }, [view]);
 
   useEffect(() => {
     window.history.replaceState({ view }, '', window.location.pathname);
@@ -40,10 +46,34 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    let listener;
+
+    async function bindBackButton() {
+      listener = await CapacitorApp.addListener('backButton', () => {
+        if (viewRef.current !== 'home') {
+          setView('home');
+          window.history.replaceState({ view: 'home' }, '', window.location.pathname);
+        }
+      });
+    }
+
+    bindBackButton();
+
+    return () => {
+      listener?.remove();
+    };
+  }, []);
+
   function navigate(nextView) {
     if (nextView === view) return;
     setView(nextView);
     window.history.pushState({ view: nextView }, '', window.location.pathname);
+  }
+
+  function refreshActiveView() {
+    setBootstrapData(null);
+    setRefreshKey((current) => current + 1);
   }
 
   async function submitAuth(event) {
@@ -128,9 +158,10 @@ function App() {
   }
 
   return (
-    <Layout onLogout={logout} onNavigate={navigate} user={session.user}>
+    <Layout onLogout={logout} onNavigate={navigate} onRefresh={refreshActiveView} user={session.user}>
       {view === 'home' && (
         <HomePage
+          key={`home-${refreshKey}`}
           bootstrapAgenda={bootstrapData?.todayAgenda}
           bootstrapAnnouncement={bootstrapData?.latestAnnouncement}
           user={session.user}
@@ -141,15 +172,15 @@ function App() {
           }}
         />
       )}
-      {view === 'agenda' && <AgendaPage agenda={selectedAgenda} user={session.user} />}
-      {view === 'tagihan' && <BillsPage />}
-      {view === 'jadwal' && <SchedulePage user={session.user} />}
-      {view === 'kitab' && <BooksPage />}
-      {view === 'profil' && <ProfilePage user={session.user} onUserUpdate={updateSessionUser} />}
-      {view === 'perizinan' && <PermitsPage user={session.user} />}
-      {view === 'kalender' && <CalendarPage />}
-      {view === 'notifikasi' && <NotificationsPage onNavigate={setView} />}
-      {view === 'tentang' && <AboutPage />}
+      {view === 'agenda' && selectedAgenda && <AgendaPage key={`agenda-${refreshKey}`} agenda={selectedAgenda} user={session.user} />}
+      {view === 'tagihan' && <BillsPage key={`tagihan-${refreshKey}`} />}
+      {view === 'jadwal' && <SchedulePage key={`jadwal-${refreshKey}`} user={session.user} />}
+      {view === 'kitab' && <BooksPage key={`kitab-${refreshKey}`} />}
+      {view === 'profil' && <ProfilePage key={`profil-${refreshKey}`} user={session.user} onUserUpdate={updateSessionUser} />}
+      {view === 'perizinan' && <PermitsPage key={`perizinan-${refreshKey}`} user={session.user} />}
+      {view === 'kalender' && <CalendarPage key={`kalender-${refreshKey}`} />}
+      {view === 'notifikasi' && <NotificationsPage key={`notifikasi-${refreshKey}`} onNavigate={navigate} />}
+      {view === 'tentang' && <AboutPage key={`tentang-${refreshKey}`} />}
     </Layout>
   );
 }

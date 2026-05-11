@@ -1,4 +1,4 @@
-import { Camera, CheckCircle2, Clock3, FileText, LocateFixed, MapPin, XCircle } from 'lucide-react';
+import { Camera, CheckCircle2, Clock3, FileText, LocateFixed, MapPin, RefreshCw, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '../api';
 import { ImagePlaceholder } from '../components/ImagePlaceholder';
@@ -20,6 +20,7 @@ export function AgendaPage({ agenda, user }) {
   const [attendanceResult, setAttendanceResult] = useState(null);
   const [teacherReport, setTeacherReport] = useState(null);
   const [reportStatus, setReportStatus] = useState('');
+  const [cameraFacing, setCameraFacing] = useState('environment');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -93,7 +94,7 @@ export function AgendaPage({ agenda, user }) {
     );
   }
 
-  async function startCamera() {
+  async function startCamera(facing = cameraFacing) {
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraStatus('Browser/perangkat tidak mendukung kamera langsung');
       return;
@@ -102,15 +103,27 @@ export function AgendaPage({ agenda, user }) {
     try {
       stopCamera();
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' } },
+        video: { facingMode: { ideal: facing } },
         audio: false,
       });
       streamRef.current = stream;
       setCameraStream(stream);
-      setCameraStatus('Kamera aktif');
+      setCameraStatus(facing === 'user' ? 'Kamera depan aktif' : 'Kamera belakang aktif');
     } catch {
       setCameraStatus('Izin kamera ditolak atau kamera tidak tersedia');
     }
+  }
+
+  async function switchCamera() {
+    const nextFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+    setCameraFacing(nextFacing);
+    setPhotoBlob(null);
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview);
+      setPhotoPreview('');
+    }
+    setCameraStatus('Mengganti kamera...');
+    await startCamera(nextFacing);
   }
 
   function stopCamera() {
@@ -297,8 +310,11 @@ export function AgendaPage({ agenda, user }) {
               </button>
             ) : (
               <>
-                <button className="outline-button" onClick={startCamera}>
+                <button className="outline-button" onClick={() => startCamera()}>
                   <Camera size={18} /> Nyalakan Kamera
+                </button>
+                <button className="outline-button" onClick={switchCamera}>
+                  <RefreshCw size={18} /> Putar Kamera
                 </button>
                 <button className="outline-button" onClick={capturePhoto}>
                   <Camera size={18} /> Ambil Foto

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { LoadingState } from '../components/LoadingState';
 import { ListScreen } from '../components/ListScreen';
-import { getSchedulesForClass, normalizeSantriUser } from '../data/mockData';
+import { normalizeSantriUser } from '../data/mockData';
 import './SchedulePage.css';
 
 export function SchedulePage({ user }) {
@@ -20,10 +20,10 @@ export function SchedulePage({ user }) {
         if (!alive) return;
         setSchedules(data.schedules || []);
         setStatus('ready');
-      } catch {
+      } catch (error) {
         if (!alive) return;
-        setSchedules(mapFallbackSchedules(santri.className));
-        setStatus('fallback');
+        setSchedules([]);
+        setStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
       }
     }
 
@@ -37,7 +37,9 @@ export function SchedulePage({ user }) {
   return (
     <ListScreen title="Jadwal Pengajian Malam" subtitle={`${santri.className}, jadwal Minggu sampai Rabu.`}>
       {status === 'loading' && <LoadingState rows={3} />}
-      {status !== 'loading' && schedules.map((schedule) => (
+      {status !== 'loading' && status !== 'ready' && <p className="empty-schedule">{status}</p>}
+      {status === 'ready' && schedules.length === 0 && <p className="empty-schedule">Belum ada jadwal.</p>}
+      {status === 'ready' && schedules.map((schedule) => (
         <article className="schedule-card" key={schedule.id || `${schedule.day}-${schedule.title}`}>
           <div className="schedule-day">
             <span>{schedule.day}</span>
@@ -53,14 +55,4 @@ export function SchedulePage({ user }) {
       ))}
     </ListScreen>
   );
-}
-
-function mapFallbackSchedules(className) {
-  return getSchedulesForClass(className).map(([day, title, time, teacher]) => ({
-    day,
-    title,
-    time,
-    teacher,
-    location: 'Aula Utama',
-  }));
 }

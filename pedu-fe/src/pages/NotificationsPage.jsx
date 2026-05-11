@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { LoadingState } from '../components/LoadingState';
 import { ListScreen } from '../components/ListScreen';
-import { announcements } from '../data/mockData';
 import './NotificationsPage.css';
 
 export function NotificationsPage({ onNavigate }) {
@@ -20,17 +19,10 @@ export function NotificationsPage({ onNavigate }) {
         if (!alive) return;
         setNotifications(data.notifications || []);
         setStatus('ready');
-      } catch {
+      } catch (error) {
         if (!alive) return;
-        setNotifications(announcements.map((item, index) => ({
-          id: `fallback-${index}`,
-          type: 'announcement',
-          title: item.title,
-          body: item.body,
-          dateLabel: item.date,
-          isRead: true,
-        })));
-        setStatus('fallback');
+        setNotifications([]);
+        setStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
       }
     }
 
@@ -44,12 +36,10 @@ export function NotificationsPage({ onNavigate }) {
   }, []);
 
   async function openNotification(notification) {
-    if (!String(notification.id).startsWith('fallback')) {
-      await apiFetch(`/santri/notifications/${notification.id}/read`, { method: 'POST' });
-      setNotifications((current) => current.map((item) => (
-        item.id === notification.id ? { ...item, isRead: true } : item
-      )));
-    }
+    await apiFetch(`/santri/notifications/${notification.id}/read`, { method: 'POST' });
+    setNotifications((current) => current.map((item) => (
+      item.id === notification.id ? { ...item, isRead: true } : item
+    )));
 
     if (notification.type === 'bill' || notification.action === 'tagihan') {
       onNavigate('tagihan');
@@ -67,13 +57,19 @@ export function NotificationsPage({ onNavigate }) {
   return (
     <ListScreen title="Notifikasi" subtitle="Pengumuman pesantren, tagihan baru, dan informasi penting.">
       {status === 'loading' && <LoadingState rows={3} />}
-      {status !== 'loading' && notifications.length === 0 && (
+      {status !== 'loading' && status !== 'ready' && (
+        <div className="empty-notification">
+          <Bell size={24} />
+          <p>{status}</p>
+        </div>
+      )}
+      {status === 'ready' && notifications.length === 0 && (
         <div className="empty-notification">
           <Bell size={24} />
           <p>Belum ada notifikasi.</p>
         </div>
       )}
-      {status !== 'loading' && notifications.map((notification) => (
+      {status === 'ready' && notifications.map((notification) => (
         <button
           className={`notification-item ${notification.isRead ? '' : 'unread'}`}
           key={notification.id}

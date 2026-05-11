@@ -6,6 +6,51 @@
   position: relative;
   overflow-x: hidden;
   padding-bottom: 24px;
+  transform: translateY(var(--pull-distance, 0));
+  transition: transform 180ms ease;
+}
+
+.pull-refresh {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 30;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(31, 42, 36, 0.92);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -8px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.pull-refresh.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.pull-refresh span {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+}
+
+.pull-refresh .spinning {
+  animation: pull-refresh-spin 750ms linear infinite;
+}
+
+.pull-refresh small {
+  font: inherit;
+  white-space: nowrap;
 }
 
 .top-area {
@@ -20,6 +65,12 @@
   grid-template-columns: 48px 1fr 38px 38px 38px;
   align-items: center;
   gap: 9px;
+}
+
+@keyframes pull-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .profile-row strong {

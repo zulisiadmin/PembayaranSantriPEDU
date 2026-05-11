@@ -20,15 +20,21 @@ export function clearSession() {
 export async function apiFetch(path, options = {}) {
   const session = getStoredSession();
   const isFormData = options.body instanceof FormData;
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      Accept: 'application/json',
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
-      ...options.headers,
-    },
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        Accept: 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+        ...options.headers,
+      },
+    });
+  } catch {
+    throw new Error('Internet tidak ada, mohon periksa jaringan anda.');
+  }
 
   if (!response.ok) {
     let message = `API error ${response.status}`;

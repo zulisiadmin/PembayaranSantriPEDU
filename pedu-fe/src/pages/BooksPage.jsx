@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { apiFetch } from '../api';
 import { ImagePlaceholder } from '../components/ImagePlaceholder';
 import { ListScreen } from '../components/ListScreen';
-import { books as fallbackBooks } from '../data/mockData';
 import './BooksPage.css';
 
 export function BooksPage() {
@@ -26,13 +25,10 @@ export function BooksPage() {
         setSource(data.sourceName || 'Google Drive');
         setFolderUrl(data.folderUrl || '');
         setStatus('ready');
-      } catch {
+      } catch (error) {
         if (!alive) return;
-        const filtered = fallbackBooks
-          .filter((book) => book.title.toLowerCase().includes(query.toLowerCase()))
-          .sort((a, b) => a.title.localeCompare(b.title));
-        setBooks(filtered);
-        setStatus('fallback');
+        setBooks([]);
+        setStatus(error.message || 'Internet tidak ada, mohon periksa jaringan anda.');
       }
     }, 180);
 
@@ -73,7 +69,7 @@ export function BooksPage() {
         </div>
       )}
 
-      {status !== 'loading' && books.map((book) => (
+      {status === 'ready' && books.map((book) => (
         <article className="book-item" key={book.id || book.title}>
           <ImagePlaceholder label={book.imageAlt} />
           <div className="book-meta">
@@ -91,7 +87,11 @@ export function BooksPage() {
         </article>
       ))}
 
-      {status !== 'loading' && books.length === 0 && (
+      {status !== 'loading' && status !== 'ready' && (
+        <div className="empty-books">{status}</div>
+      )}
+
+      {status === 'ready' && books.length === 0 && (
         <div className="empty-books">Kitab tidak ditemukan.</div>
       )}
     </ListScreen>

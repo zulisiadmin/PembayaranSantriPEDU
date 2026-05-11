@@ -19,6 +19,7 @@ body {
   min-height: 100vh;
   background: #f5f8f3;
   color: var(--ink);
+  overscroll-behavior-y: contain;
 }
 
 button,

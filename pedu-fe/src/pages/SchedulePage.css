@@ -1,4 +1,5 @@
-.schedule-status {
+.schedule-status,
+.empty-schedule {
   margin: 0;
   color: var(--muted);
   font-weight: 800;
