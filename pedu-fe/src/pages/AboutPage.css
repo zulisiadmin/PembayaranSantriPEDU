@@ -1,0 +1,73 @@
+.about-hero {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f6fbf4;
+  text-align: center;
+}
+
+.about-icon {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--primary);
+}
+
+.about-hero h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 0;
+}
+
+.about-hero p,
+.about-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.about-section {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  padding: 13px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.about-section h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.about-section p + p {
+  margin-top: 8px;
+}
+
+.developer-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+.developer-list li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1.35;
+}
+
+.developer-list strong {
+  color: var(--ink);
+}

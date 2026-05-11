@@ -1,0 +1,144 @@
+.notification-status {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.notification-item {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  align-items: start;
+  gap: 12px;
+  padding: 13px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+}
+
+.notification-item.unread {
+  border-color: #cfe7c9;
+  background: #f6fbf4;
+}
+
+.notification-item h3 {
+  margin: 0 0 5px;
+  font-size: 15px;
+}
+
+.notification-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.notification-item span {
+  display: block;
+  margin-top: 8px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  justify-self: end;
+}
+
+.notification-item i {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f4b000;
+}
+
+.empty-notification {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 22px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty-notification p {
+  margin: 0;
+}
+
+.notification-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(31 42 36 / 48%);
+}
+
+.notification-modal {
+  position: relative;
+  width: min(100%, 360px);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px 18px 18px;
+  border-radius: 8px;
+  background: #fff;
+  text-align: center;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--muted);
+  background: #f2f6f1;
+}
+
+.modal-notification-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--primary);
+  background: #e8f6e5;
+}
+
+.notification-modal h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.notification-modal p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.notification-modal span {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.modal-primary-button {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--primary);
+  font-weight: 900;
+}

@@ -1,0 +1,172 @@
+.permit-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.permit-tabs button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #4a564d;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.permit-tabs button.active {
+  color: #fff;
+  background: var(--primary);
+}
+
+.new-permit-button,
+.submit-permit-button,
+.download-letter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 0 13px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--secondary);
+  font-weight: 800;
+}
+
+.permit-form,
+.permit-detail {
+  display: grid;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.permit-form label {
+  display: grid;
+  gap: 6px;
+  color: #344238;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.permit-form input,
+.permit-form select,
+.permit-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  color: #26322a;
+  background: #fff;
+}
+
+.permit-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 11px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.permit-item h3,
+.permit-item p,
+.permit-detail p {
+  margin: 0;
+}
+
+.permit-item .small-button {
+  padding: 0 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.permit-item h3 {
+  text-transform: capitalize;
+  font-size: 15px;
+}
+
+.permit-item p,
+.permit-detail p,
+.empty-permit {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.permit-status {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 7px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.permit-status.menunggu {
+  color: #795600;
+  background: #fff4cf;
+}
+
+.permit-status.disetujui {
+  color: var(--primary);
+  background: var(--soft);
+}
+
+.permit-status.ditolak {
+  color: #9d2c2c;
+  background: #fff0f0;
+}
+
+.permit-detail > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.permit-detail h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.permit-detail > div button {
+  color: var(--primary);
+  background: transparent;
+  font-weight: 800;
+}
+
+.permit-loader {
+  display: flex;
+  gap: 7px;
+  min-height: 38px;
+  align-items: center;
+}
+
+.permit-loader span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--secondary);
+  animation: permitPulse 0.85s ease-in-out infinite;
+}
+
+.permit-loader span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.permit-loader span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes permitPulse {
+  50% {
+    opacity: 0.35;
+    transform: translateY(-4px);
+  }
+}

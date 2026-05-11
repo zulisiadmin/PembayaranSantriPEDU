@@ -1,0 +1,87 @@
+.phone-shell {
+  max-width: 450px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: #fff;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 24px;
+}
+
+.top-area {
+  background: var(--primary);
+  color: #fff;
+  padding: max(18px, env(safe-area-inset-top)) 16px 112px;
+}
+
+.profile-row {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 48px 1fr 38px 38px 38px;
+  align-items: center;
+  gap: 9px;
+}
+
+.profile-row strong {
+  display: block;
+  font-size: 15px;
+}
+
+.profile-row span {
+  display: block;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: #f2faef;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  font-weight: 900;
+}
+
+.avatar.large {
+  width: 68px;
+  height: 68px;
+  font-size: 20px;
+  border-color: var(--third);
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.notification-button span {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #f4b000;
+  color: #1f2a24;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+@media (max-width: 360px) {
+  .profile-row {
+    grid-template-columns: 44px 1fr 34px 34px 34px;
+    gap: 6px;
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PEDU Santri",
+  "short_name": "PEDU",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f8f3",
+  "theme_color": "#386641",
+  "icons": []
+}
