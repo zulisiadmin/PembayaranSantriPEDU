@@ -1,4 +1,4 @@
-import { Clock3, MapPin } from 'lucide-react';
+import { Clock3, MapPin, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 import { LoadingState } from '../components/LoadingState';
@@ -26,6 +26,8 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
   const [todayAgenda, setTodayAgenda] = useState(bootstrapAgenda || []);
   const [agendaStatus, setAgendaStatus] = useState(bootstrapAgenda ? 'ready' : 'loading');
   const [announcement, setAnnouncement] = useState(bootstrapAnnouncement || null);
+  const [announcementOpen, setAnnouncementOpen] = useState(false);
+  const [unpaidCount, setUnpaidCount] = useState(0);
   const visibleMenuItems = user?.role === 'ustad'
     ? menuItems.filter((item) => !['tagihan', 'perizinan'].includes(item.target))
     : menuItems;
@@ -81,6 +83,27 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
     };
   }, []);
 
+  useEffect(() => {
+    let alive = true;
+
+    async function loadUnpaidBills() {
+      try {
+        const data = await apiFetch('/santri/bills');
+        if (!alive) return;
+        setUnpaidCount((data.bills || []).filter((bill) => bill.status !== 'paid').length);
+      } catch {
+        if (!alive) return;
+        setUnpaidCount(0);
+      }
+    }
+
+    loadUnpaidBills();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <div className="screen-content home-content">
       <section className="today-panel">
@@ -122,13 +145,13 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
       </section>
 
       {announcement && (
-        <section className="announcement-strip" onClick={() => onNavigate('notifikasi')}>
+        <button className="announcement-strip" type="button" onClick={() => setAnnouncementOpen(true)}>
           <i className="fa-solid fa-bullhorn" aria-hidden="true" />
           <div>
             <strong>{announcement.title}</strong>
             <p>{announcement.body}</p>
           </div>
-        </section>
+        </button>
       )}
 
       <section className="menu-section">
@@ -144,12 +167,31 @@ export function HomePage({ bootstrapAgenda, bootstrapAnnouncement, onOpenAgenda,
               <span>
                 <i className={item.icon} aria-hidden="true" />
                 {/* <img src="/icons/nama-icon.svg" alt="" /> */}
+                {item.target === 'tagihan' && unpaidCount > 0 && (
+                  <b className="menu-badge">{unpaidCount > 99 ? '99+' : unpaidCount}</b>
+                )}
               </span>
               {item.label}
             </button>
           ))}
         </div>
       </section>
+      {announcementOpen && announcement && (
+        <div className="announcement-modal-backdrop" role="dialog" aria-modal="true" aria-label="Detail pengumuman">
+          <section className="announcement-modal">
+            <button className="modal-close-button" type="button" onClick={() => setAnnouncementOpen(false)} aria-label="Tutup">
+              <X size={18} />
+            </button>
+            <i className="fa-solid fa-bullhorn" aria-hidden="true" />
+            <h2>{announcement.title}</h2>
+            <p>{announcement.body}</p>
+            {announcement.dateLabel && <span>{announcement.dateLabel}</span>}
+            <button className="modal-primary-button" type="button" onClick={() => setAnnouncementOpen(false)}>
+              Mengerti
+            </button>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

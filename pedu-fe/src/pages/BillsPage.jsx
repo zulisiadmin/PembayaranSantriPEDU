@@ -13,6 +13,7 @@ export function BillsPage() {
   const [voucherHint, setVoucherHint] = useState(false);
   const [activeTab, setActiveTab] = useState('unpaid');
   const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [paymentSession, setPaymentSession] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -72,7 +73,10 @@ export function BillsPage() {
       setStatus(response.message || 'Pembayaran siap diproses.');
       await loadBills();
       if (response.paymentUrl) {
-        window.location.href = response.paymentUrl;
+        setPaymentSession({
+          url: response.paymentUrl,
+          billName: bill.name,
+        });
       }
     } catch (error) {
       setStatus(error.message || 'Pembayaran belum bisa diproses.');
@@ -148,6 +152,38 @@ export function BillsPage() {
               Lihat Tagihan
             </button>
           </section>
+        </div>
+      )}
+      {paymentSession && (
+        <div className="payment-sheet" role="dialog" aria-modal="true" aria-label="Halaman pembayaran">
+          <header>
+            <button
+              className="modal-close-button"
+              onClick={async () => {
+                setPaymentSession(null);
+                await loadBills();
+              }}
+              aria-label="Tutup pembayaran"
+            >
+              <X size={18} />
+            </button>
+            <div>
+              <strong>Pembayaran</strong>
+              <span>{paymentSession.billName}</span>
+            </div>
+          </header>
+          <iframe title="Pembayaran Tripay" src={paymentSession.url} />
+          <footer>
+            <button
+              className="modal-primary-button"
+              onClick={async () => {
+                setPaymentSession(null);
+                await loadBills();
+              }}
+            >
+              Selesai
+            </button>
+          </footer>
         </div>
       )}
     </ListScreen>

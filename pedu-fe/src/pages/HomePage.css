@@ -145,6 +145,8 @@
 }
 
 .announcement-strip {
+  width: 100%;
+  text-align: left;
   margin-top: 14px;
   display: grid;
   grid-template-columns: 42px 1fr;
@@ -205,6 +207,7 @@
 }
 
 .menu-grid span {
+  position: relative;
   width: 60px;
   height: 60px;
   display: grid;
@@ -223,6 +226,73 @@
 .menu-grid button:nth-child(2n) span {
   color: #d89700;
   background: #fff2cc;
+}
+
+.menu-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: 999px;
+  color: #fff;
+  background: #d42d2d;
+  border: 2px solid #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.announcement-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(31 42 36 / 48%);
+}
+
+.announcement-modal {
+  position: relative;
+  width: min(100%, 360px);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px 18px 18px;
+  border-radius: 8px;
+  background: #fff;
+  text-align: center;
+}
+
+.announcement-modal > i {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #d89700;
+  background: #fff2ba;
+  font-size: 24px;
+}
+
+.announcement-modal h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.announcement-modal p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.announcement-modal span {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 @media (max-width: 360px) {

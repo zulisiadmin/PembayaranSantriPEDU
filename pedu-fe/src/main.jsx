@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { apiFetch, clearSession, getStoredSession, storeSession } from './api';
 import { Layout } from './components/Layout';
@@ -27,6 +27,24 @@ function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [selectedAgenda, setSelectedAgenda] = useState(getTestingAgenda()[0]);
   const [bootstrapData, setBootstrapData] = useState(null);
+
+  useEffect(() => {
+    window.history.replaceState({ view }, '', window.location.pathname);
+
+    function handlePopState(event) {
+      const nextView = event.state?.view || 'home';
+      setView(nextView);
+    }
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  function navigate(nextView) {
+    if (nextView === view) return;
+    setView(nextView);
+    window.history.pushState({ view: nextView }, '', window.location.pathname);
+  }
 
   async function submitAuth(event) {
     event.preventDefault();
@@ -78,6 +96,7 @@ function App() {
     setSession(null);
     setBootstrapData(null);
     setView('home');
+    window.history.replaceState({ view: 'home' }, '', window.location.pathname);
   }
 
   function updateSessionUser(user) {
@@ -109,16 +128,16 @@ function App() {
   }
 
   return (
-    <Layout onLogout={logout} onNavigate={setView} user={session.user}>
+    <Layout onLogout={logout} onNavigate={navigate} user={session.user}>
       {view === 'home' && (
         <HomePage
           bootstrapAgenda={bootstrapData?.todayAgenda}
           bootstrapAnnouncement={bootstrapData?.latestAnnouncement}
           user={session.user}
-          onNavigate={setView}
+          onNavigate={navigate}
           onOpenAgenda={(agenda) => {
             setSelectedAgenda(agenda);
-            setView('agenda');
+            navigate('agenda');
           }}
         />
       )}
