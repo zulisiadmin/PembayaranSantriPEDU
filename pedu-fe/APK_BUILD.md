@@ -16,9 +16,10 @@ Install:
 
 1. Android Studio
 2. Android SDK
-3. Android SDK Platform minimal API 35
-4. Android SDK Build Tools
-5. Android Emulator, atau HP Android dengan USB debugging
+3. JDK 21
+4. Android SDK Platform minimal API 35
+5. Android SDK Build Tools
+6. Android Emulator, atau HP Android dengan USB debugging
 
 Setelah Android Studio terinstall, pastikan file ini ada:
 
